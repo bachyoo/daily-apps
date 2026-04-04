@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { AdBanner } from '@daily-apps/shared';
 
 export default function TimerApp() {
   const [minutes, setMinutes] = useState(5);
@@ -138,16 +139,6 @@ export default function TimerApp() {
                 filter: `drop-shadow(0 0 12px ${glowColor})`,
               }}
             />
-            {/* Dot indicator at progress end */}
-            {!isFinished && (
-              <circle
-                cx={150 + 140 * Math.cos(2 * Math.PI * progress / 100 - Math.PI / 2)}
-                cy={150 + 140 * Math.sin(2 * Math.PI * progress / 100 - Math.PI / 2)}
-                r="6"
-                fill={ringColor}
-                style={{ filter: `drop-shadow(0 0 8px ${glowColor})`, transition: 'all 1s linear' }}
-              />
-            )}
           </svg>
 
           {/* Center content */}
@@ -244,8 +235,13 @@ export default function TimerApp() {
 
       </div>
 
+      {/* Ad Banner */}
+      <div className="relative z-10 w-full max-w-sm mt-8">
+        <AdBanner />
+      </div>
+
       {/* Minimal footer */}
-      <p className="absolute bottom-4 text-white/10 text-xs tracking-wider">DAILY APPS — DAY 001</p>
+      <p className="mt-4 text-white/10 text-xs tracking-wider">DAILY APPS — DAY 001</p>
     </div>
   );
 }
