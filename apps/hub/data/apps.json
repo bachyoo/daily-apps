@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "day-001-timer",
+    "name": "Timer",
+    "description": "새로운 앱",
+    "category": "utility",
+    "day": 1,
+    "date": "2026-04-05",
+    "thumbnail": "/thumbnails/placeholder.png",
+    "path": "/apps/day-001-timer"
+  }
+]
