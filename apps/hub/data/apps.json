@@ -2,7 +2,7 @@
   {
     "id": "day-001-timer",
     "name": "Timer",
-    "description": "새로운 앱",
+    "description": "프리셋과 커스텀 시간 설정이 가능한 깔끔한 타이머",
     "category": "utility",
     "day": 1,
     "date": "2026-04-05",
