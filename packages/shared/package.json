@@ -1,0 +1,20 @@
+{
+  "name": "@daily-apps/shared",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./styles/theme": "./styles/theme.js"
+  },
+  "dependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^5",
+    "next": "latest"
+  }
+}
