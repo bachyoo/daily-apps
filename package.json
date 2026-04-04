@@ -1,0 +1,12 @@
+{
+  "name": "daily-apps",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter hub dev",
+    "build": "pnpm -r build",
+    "create-app": "./scripts/create-app.sh"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}
