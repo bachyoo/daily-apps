@@ -57,12 +57,14 @@ export default function TimerApp() {
   }, []);
 
   const handlePreset = useCallback((secs: number) => {
-    const h = Math.floor(secs / 3600);
-    const m = Math.floor((secs % 3600) / 60);
-    const s = secs % 60;
+    const newTotal = totalSeconds + secs;
+    const clamped = Math.min(newTotal, 23 * 3600 + 59 * 60 + 59); // max 23:59:59
+    const h = Math.floor(clamped / 3600);
+    const m = Math.floor((clamped % 3600) / 60);
+    const s = clamped % 60;
     applyTime(h, m, s);
     setIsRunning(false);
-  }, [applyTime]);
+  }, [applyTime, totalSeconds]);
 
   const handleStart = () => {
     if (remainingSeconds <= 0) {
