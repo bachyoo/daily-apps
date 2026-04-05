@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { AdBanner } from '@daily-apps/shared';
 
 export default function TimerApp() {
+  const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(0);
   const [totalSeconds, setTotalSeconds] = useState(5 * 60);
@@ -16,8 +17,8 @@ export default function TimerApp() {
     { label: '3m', value: 180 },
     { label: '5m', value: 300 },
     { label: '10m', value: 600 },
-    { label: '15m', value: 900 },
     { label: '30m', value: 1800 },
+    { label: '1h', value: 3600 },
   ];
 
   useEffect(() => {
@@ -35,24 +36,37 @@ export default function TimerApp() {
     return () => clearInterval(interval);
   }, [isRunning, remainingSeconds]);
 
-  const displayMinutes = Math.floor(remainingSeconds / 60);
+  const displayHours = Math.floor(remainingSeconds / 3600);
+  const displayMinutes = Math.floor((remainingSeconds % 3600) / 60);
   const displaySeconds = remainingSeconds % 60;
   const progress = totalSeconds > 0 ? (remainingSeconds / totalSeconds) * 100 : 100;
   const circumference = 2 * Math.PI * 140;
   const strokeDashoffset = circumference * (1 - progress / 100);
 
-  const handlePreset = useCallback((secs: number) => {
-    setTotalSeconds(secs);
-    setRemainingSeconds(secs);
-    setMinutes(Math.floor(secs / 60));
-    setSeconds(secs % 60);
-    setIsRunning(false);
+  const applyTime = useCallback((h: number, m: number, s: number) => {
+    const ch = Math.max(0, Math.min(23, h));
+    const cm = Math.max(0, Math.min(59, m));
+    const cs = Math.max(0, Math.min(59, s));
+    setHours(ch);
+    setMinutes(cm);
+    setSeconds(cs);
+    const total = ch * 3600 + cm * 60 + cs;
+    setTotalSeconds(total);
+    setRemainingSeconds(total);
     setIsFinished(false);
   }, []);
 
+  const handlePreset = useCallback((secs: number) => {
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    const s = secs % 60;
+    applyTime(h, m, s);
+    setIsRunning(false);
+  }, [applyTime]);
+
   const handleStart = () => {
     if (remainingSeconds <= 0) {
-      const total = minutes * 60 + seconds;
+      const total = hours * 3600 + minutes * 60 + seconds;
       if (total <= 0) return;
       setTotalSeconds(total);
       setRemainingSeconds(total);
@@ -69,17 +83,6 @@ export default function TimerApp() {
     setRemainingSeconds(totalSeconds);
   };
 
-  const handleCustomTime = (m: number, s: number) => {
-    const cm = Math.max(0, Math.min(99, m));
-    const cs = Math.max(0, Math.min(59, s));
-    setMinutes(cm);
-    setSeconds(cs);
-    const total = cm * 60 + cs;
-    setTotalSeconds(total);
-    setRemainingSeconds(total);
-    setIsFinished(false);
-  };
-
   // Dynamic colors based on state
   const ringColor = isFinished
     ? '#ef4444'
@@ -91,6 +94,8 @@ export default function TimerApp() {
     : isRunning
       ? 'rgba(34,211,238,0.3)'
       : 'rgba(129,140,248,0.3)';
+
+  const inputClass = "w-14 text-center text-xl font-mono bg-white/5 border border-white/10 rounded-xl py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 backdrop-blur-sm";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col items-center justify-center px-4 py-8 relative overflow-hidden">
@@ -110,34 +115,13 @@ export default function TimerApp() {
         {/* Timer Ring */}
         <div className="relative w-72 h-72">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 300 300">
-            {/* Background ring */}
+            <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+            <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" strokeDasharray={`${circumference}`} />
             <circle
-              cx="150" cy="150" r="140"
-              fill="none"
-              stroke="rgba(255,255,255,0.05)"
-              strokeWidth="8"
-            />
-            {/* Track ring */}
-            <circle
-              cx="150" cy="150" r="140"
-              fill="none"
-              stroke="rgba(255,255,255,0.08)"
-              strokeWidth="8"
-              strokeDasharray={`${circumference}`}
-            />
-            {/* Progress ring */}
-            <circle
-              cx="150" cy="150" r="140"
-              fill="none"
-              stroke={ringColor}
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeDasharray={`${circumference}`}
-              strokeDashoffset={strokeDashoffset}
-              style={{
-                transition: 'stroke-dashoffset 1s linear, stroke 0.5s ease',
-                filter: `drop-shadow(0 0 12px ${glowColor})`,
-              }}
+              cx="150" cy="150" r="140" fill="none"
+              stroke={ringColor} strokeWidth="8" strokeLinecap="round"
+              strokeDasharray={`${circumference}`} strokeDashoffset={strokeDashoffset}
+              style={{ transition: 'stroke-dashoffset 1s linear, stroke 0.5s ease', filter: `drop-shadow(0 0 12px ${glowColor})` }}
             />
           </svg>
 
@@ -150,7 +134,13 @@ export default function TimerApp() {
               </div>
             ) : (
               <>
-                <span className="text-6xl font-mono font-light text-white tabular-nums tracking-wider">
+                <span className={`font-mono font-light text-white tabular-nums tracking-wider ${displayHours > 0 ? 'text-4xl' : 'text-6xl'}`}>
+                  {displayHours > 0 && (
+                    <>
+                      {String(displayHours).padStart(2, '0')}
+                      <span className="animate-pulse text-white/50">:</span>
+                    </>
+                  )}
                   {String(displayMinutes).padStart(2, '0')}
                   <span className="animate-pulse text-white/50">:</span>
                   {String(displaySeconds).padStart(2, '0')}
@@ -163,43 +153,43 @@ export default function TimerApp() {
           </div>
         </div>
 
-        {/* Custom Time Input */}
+        {/* Custom Time Input: HH : MM : SS */}
         {!isRunning && !isFinished && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <input
-              type="text"
-              inputMode="numeric"
-              value={String(minutes).padStart(2, '0')}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, '');
-                handleCustomTime(Math.min(99, Number(v)), seconds);
-              }}
+              type="text" inputMode="numeric"
+              value={String(hours).padStart(2, '0')}
+              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); applyTime(Math.min(23, Number(v)), minutes, seconds); }}
               onFocus={(e) => e.target.select()}
-              className="w-16 text-center text-xl font-mono bg-white/5 border border-white/10 rounded-xl py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 backdrop-blur-sm"
+              className={inputClass}
             />
-            <span className="text-white/30 text-xl font-light">:</span>
+            <span className="text-white/30 text-lg font-light">:</span>
             <input
-              type="text"
-              inputMode="numeric"
-              value={String(seconds).padStart(2, '0')}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, '');
-                handleCustomTime(minutes, Math.min(59, Number(v)));
-              }}
+              type="text" inputMode="numeric"
+              value={String(minutes).padStart(2, '0')}
+              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); applyTime(hours, Math.min(59, Number(v)), seconds); }}
               onFocus={(e) => e.target.select()}
-              className="w-16 text-center text-xl font-mono bg-white/5 border border-white/10 rounded-xl py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 backdrop-blur-sm"
+              className={inputClass}
+            />
+            <span className="text-white/30 text-lg font-light">:</span>
+            <input
+              type="text" inputMode="numeric"
+              value={String(seconds).padStart(2, '0')}
+              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); applyTime(hours, minutes, Math.min(59, Number(v))); }}
+              onFocus={(e) => e.target.select()}
+              className={inputClass}
             />
           </div>
         )}
 
-        {/* Presets */}
+        {/* Presets — single row */}
         {!isRunning && (
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex justify-center gap-1.5">
             {presets.map((p) => (
               <button
                 key={p.value}
                 onClick={() => handlePreset(p.value)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 ${
                   totalSeconds === p.value && !isFinished
                     ? 'bg-indigo-500/30 text-indigo-300 border border-indigo-400/30 shadow-lg shadow-indigo-500/10'
                     : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10 hover:text-white/70'
