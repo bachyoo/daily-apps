@@ -333,8 +333,11 @@ export default function TimerApp() {
           {isFinished ? (
             <>
               <button onClick={handleDismiss}
-                className="px-8 py-3.5 bg-white/5 border border-white/10 text-white/70 rounded-2xl text-lg font-semibold hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105 active:scale-95">
-                ✕ 종료
+                className="group relative px-8 py-3.5 rounded-2xl text-lg font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-rose-500 rounded-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-rose-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 rounded-2xl shadow-lg shadow-red-500/25 group-hover:shadow-red-500/40 transition-shadow" />
+                <span className="relative">✕ 종료</span>
               </button>
               <button onClick={handleRestart}
                 className="group relative px-8 py-3.5 rounded-2xl text-lg font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95">
