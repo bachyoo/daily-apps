@@ -75,6 +75,7 @@ export default function TimerApp() {
   const [isFinished, setIsFinished] = useState(false);
   const [alarmType, setAlarmType] = useState<AlarmType>('bell');
   const [showAlarmPicker, setShowAlarmPicker] = useState(false);
+  const [presetChain, setPresetChain] = useState(false); // true = 연속 프리셋 클릭 중
   const alarmPlayed = useRef(false);
 
   const presets = [
@@ -133,15 +134,24 @@ export default function TimerApp() {
     setIsFinished(false);
   }, []);
 
+  // 수동 입력 시 프리셋 체인 끊기
+  const handleManualTime = useCallback((h: number, m: number, s: number) => {
+    applyTime(h, m, s);
+    setPresetChain(false);
+  }, [applyTime]);
+
   const handlePreset = useCallback((secs: number) => {
-    const newTotal = totalSeconds + secs;
+    // 첫 클릭: 리셋 후 해당 시간으로, 연속 클릭: 누적
+    const base = presetChain ? totalSeconds : 0;
+    const newTotal = base + secs;
     const clamped = Math.min(newTotal, 99 * 3600 + 59 * 60 + 59);
     const h = Math.floor(clamped / 3600);
     const m = Math.floor((clamped % 3600) / 60);
     const s = clamped % 60;
     applyTime(h, m, s);
     setIsRunning(false);
-  }, [applyTime, totalSeconds]);
+    setPresetChain(true);
+  }, [applyTime, totalSeconds, presetChain]);
 
   const handleStart = () => {
     if (remainingSeconds <= 0) {
@@ -152,6 +162,7 @@ export default function TimerApp() {
     }
     setIsRunning(true);
     setIsFinished(false);
+    setPresetChain(false);
   };
 
   const handlePause = () => setIsRunning(false);
@@ -160,6 +171,7 @@ export default function TimerApp() {
     setIsRunning(false);
     setIsFinished(false);
     setRemainingSeconds(totalSeconds);
+    setPresetChain(false);
   };
 
   const ringColor = isFinished ? '#ef4444' : isRunning ? '#22d3ee' : '#818cf8';
@@ -222,15 +234,15 @@ export default function TimerApp() {
         {!isRunning && !isFinished && (
           <div className="flex items-center gap-2">
             <input type="text" inputMode="numeric" value={String(hours).padStart(2, '0')}
-              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); applyTime(Math.min(99, Number(v)), minutes, seconds); }}
+              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); handleManualTime(Math.min(99, Number(v)), minutes, seconds); }}
               onFocus={(e) => e.target.select()} className={inputClass} />
             <span className="text-white/30 text-lg font-light">:</span>
             <input type="text" inputMode="numeric" value={String(minutes).padStart(2, '0')}
-              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); applyTime(hours, Math.min(59, Number(v)), seconds); }}
+              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); handleManualTime(hours, Math.min(59, Number(v)), seconds); }}
               onFocus={(e) => e.target.select()} className={inputClass} />
             <span className="text-white/30 text-lg font-light">:</span>
             <input type="text" inputMode="numeric" value={String(seconds).padStart(2, '0')}
-              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); applyTime(hours, minutes, Math.min(59, Number(v))); }}
+              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); handleManualTime(hours, minutes, Math.min(59, Number(v))); }}
               onFocus={(e) => e.target.select()} className={inputClass} />
           </div>
         )}
