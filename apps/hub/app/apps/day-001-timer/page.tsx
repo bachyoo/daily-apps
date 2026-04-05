@@ -134,13 +134,9 @@ export default function TimerApp() {
               </div>
             ) : (
               <>
-                <span className={`font-mono font-light text-white tabular-nums tracking-wider ${displayHours > 0 ? 'text-4xl' : 'text-6xl'}`}>
-                  {displayHours > 0 && (
-                    <>
-                      {String(displayHours).padStart(2, '0')}
-                      <span className="animate-pulse text-white/50">:</span>
-                    </>
-                  )}
+                <span className="text-5xl font-mono font-light text-white tabular-nums tracking-wider">
+                  {String(displayHours).padStart(2, '0')}
+                  <span className="animate-pulse text-white/50">:</span>
                   {String(displayMinutes).padStart(2, '0')}
                   <span className="animate-pulse text-white/50">:</span>
                   {String(displaySeconds).padStart(2, '0')}
