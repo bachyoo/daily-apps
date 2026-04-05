@@ -167,18 +167,26 @@ export default function TimerApp() {
         {!isRunning && !isFinished && (
           <div className="flex items-center gap-3">
             <input
-              type="number"
-              min={0} max={99}
-              value={minutes}
-              onChange={(e) => handleCustomTime(Number(e.target.value), seconds)}
+              type="text"
+              inputMode="numeric"
+              value={String(minutes).padStart(2, '0')}
+              onChange={(e) => {
+                const v = e.target.value.replace(/\D/g, '');
+                handleCustomTime(Math.min(99, Number(v)), seconds);
+              }}
+              onFocus={(e) => e.target.select()}
               className="w-16 text-center text-xl font-mono bg-white/5 border border-white/10 rounded-xl py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 backdrop-blur-sm"
             />
             <span className="text-white/30 text-xl font-light">:</span>
             <input
-              type="number"
-              min={0} max={59}
-              value={seconds}
-              onChange={(e) => handleCustomTime(minutes, Number(e.target.value))}
+              type="text"
+              inputMode="numeric"
+              value={String(seconds).padStart(2, '0')}
+              onChange={(e) => {
+                const v = e.target.value.replace(/\D/g, '');
+                handleCustomTime(minutes, Math.min(59, Number(v)));
+              }}
+              onFocus={(e) => e.target.select()}
               className="w-16 text-center text-xl font-mono bg-white/5 border border-white/10 rounded-xl py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 backdrop-blur-sm"
             />
           </div>
