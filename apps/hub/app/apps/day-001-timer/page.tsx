@@ -44,7 +44,7 @@ export default function TimerApp() {
   const strokeDashoffset = circumference * (1 - progress / 100);
 
   const applyTime = useCallback((h: number, m: number, s: number) => {
-    const ch = Math.max(0, Math.min(23, h));
+    const ch = Math.max(0, Math.min(99, h));
     const cm = Math.max(0, Math.min(59, m));
     const cs = Math.max(0, Math.min(59, s));
     setHours(ch);
@@ -58,7 +58,7 @@ export default function TimerApp() {
 
   const handlePreset = useCallback((secs: number) => {
     const newTotal = totalSeconds + secs;
-    const clamped = Math.min(newTotal, 23 * 3600 + 59 * 60 + 59); // max 23:59:59
+    const clamped = Math.min(newTotal, 99 * 3600 + 59 * 60 + 59); // max 99:59:59
     const h = Math.floor(clamped / 3600);
     const m = Math.floor((clamped % 3600) / 60);
     const s = clamped % 60;
@@ -157,7 +157,7 @@ export default function TimerApp() {
             <input
               type="text" inputMode="numeric"
               value={String(hours).padStart(2, '0')}
-              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); applyTime(Math.min(23, Number(v)), minutes, seconds); }}
+              onChange={(e) => { const v = e.target.value.replace(/\D/g, ''); applyTime(Math.min(99, Number(v)), minutes, seconds); }}
               onFocus={(e) => e.target.select()}
               className={inputClass}
             />
@@ -237,7 +237,7 @@ export default function TimerApp() {
       </div>
 
       {/* Minimal footer */}
-      <p className="mt-4 text-white/10 text-xs tracking-wider">DAILY APPS — DAY 001</p>
+      <p className="mt-4 text-white/30 text-xs tracking-wider">DAILY APPS — DAY 001</p>
     </div>
   );
 }
