@@ -67,10 +67,10 @@ function playAlarm(type: AlarmType) {
 // === Main Component ===
 export default function TimerApp() {
   const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(5);
+  const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  const [totalSeconds, setTotalSeconds] = useState(5 * 60);
-  const [remainingSeconds, setRemainingSeconds] = useState(5 * 60);
+  const [totalSeconds, setTotalSeconds] = useState(0);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [alarmType, setAlarmType] = useState<AlarmType>('bell');
