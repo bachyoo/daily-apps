@@ -170,7 +170,11 @@ export default function TimerApp() {
   const handleReset = () => {
     setIsRunning(false);
     setIsFinished(false);
-    setRemainingSeconds(totalSeconds);
+    setHours(0);
+    setMinutes(0);
+    setSeconds(0);
+    setTotalSeconds(0);
+    setRemainingSeconds(0);
     setPresetChain(false);
   };
 
