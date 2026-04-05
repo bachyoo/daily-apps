@@ -178,6 +178,30 @@ export default function TimerApp() {
     setPresetChain(false);
   };
 
+  // 종료: 알림 끄고 초기 상태로
+  const handleDismiss = () => {
+    setIsFinished(false);
+    setRemainingSeconds(0);
+    setTotalSeconds(0);
+    setHours(0);
+    setMinutes(0);
+    setSeconds(0);
+    setPresetChain(false);
+  };
+
+  // 재설정: 처음 설정한 시간으로 되돌리기
+  const handleRestart = () => {
+    setIsFinished(false);
+    setRemainingSeconds(totalSeconds);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    setHours(h);
+    setMinutes(m);
+    setSeconds(s);
+    setPresetChain(false);
+  };
+
   const ringColor = isFinished ? '#ef4444' : isRunning ? '#22d3ee' : '#818cf8';
   const glowColor = isFinished ? 'rgba(239,68,68,0.4)' : isRunning ? 'rgba(34,211,238,0.3)' : 'rgba(129,140,248,0.3)';
 
@@ -306,26 +330,48 @@ export default function TimerApp() {
 
         {/* Controls */}
         <div className="flex gap-4">
-          {!isRunning ? (
-            <button onClick={handleStart}
-              className="group relative px-10 py-3.5 rounded-2xl text-lg font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-2xl" />
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute inset-0 rounded-2xl shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-shadow" />
-              <span className="relative">
-                {isFinished || remainingSeconds < totalSeconds ? '▶ 재시작' : '▶ 시작'}
-              </span>
-            </button>
+          {isFinished ? (
+            <>
+              <button onClick={handleDismiss}
+                className="px-8 py-3.5 bg-white/5 border border-white/10 text-white/70 rounded-2xl text-lg font-semibold hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105 active:scale-95">
+                ✕ 종료
+              </button>
+              <button onClick={handleRestart}
+                className="group relative px-8 py-3.5 rounded-2xl text-lg font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 rounded-2xl shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-shadow" />
+                <span className="relative">↻ 재설정</span>
+              </button>
+            </>
+          ) : !isRunning ? (
+            <>
+              <button onClick={handleStart}
+                className="group relative px-10 py-3.5 rounded-2xl text-lg font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 rounded-2xl shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-shadow" />
+                <span className="relative">
+                  {remainingSeconds < totalSeconds ? '▶ 재시작' : '▶ 시작'}
+                </span>
+              </button>
+              <button onClick={handleReset}
+                className="px-6 py-3.5 bg-white/5 border border-white/10 text-white/50 rounded-2xl text-lg font-semibold hover:bg-white/10 hover:text-white/70 transition-all duration-300 hover:scale-105 active:scale-95">
+                ↺
+              </button>
+            </>
           ) : (
-            <button onClick={handlePause}
-              className="px-10 py-3.5 bg-amber-500/20 border border-amber-500/30 text-amber-300 rounded-2xl text-lg font-semibold hover:bg-amber-500/30 transition-all duration-300 hover:scale-105 active:scale-95">
-              ⏸ 일시정지
-            </button>
+            <>
+              <button onClick={handlePause}
+                className="px-10 py-3.5 bg-amber-500/20 border border-amber-500/30 text-amber-300 rounded-2xl text-lg font-semibold hover:bg-amber-500/30 transition-all duration-300 hover:scale-105 active:scale-95">
+                ⏸ 일시정지
+              </button>
+              <button onClick={handleReset}
+                className="px-6 py-3.5 bg-white/5 border border-white/10 text-white/50 rounded-2xl text-lg font-semibold hover:bg-white/10 hover:text-white/70 transition-all duration-300 hover:scale-105 active:scale-95">
+                ↺
+              </button>
+            </>
           )}
-          <button onClick={handleReset}
-            className="px-6 py-3.5 bg-white/5 border border-white/10 text-white/50 rounded-2xl text-lg font-semibold hover:bg-white/10 hover:text-white/70 transition-all duration-300 hover:scale-105 active:scale-95">
-            ↺
-          </button>
         </div>
 
       </div>
